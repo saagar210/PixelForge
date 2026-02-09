@@ -11,6 +11,18 @@ pub enum AppError {
     #[error("Unsupported format: {0}")]
     UnsupportedFormat(String),
 
+    #[error("Save failed: {0}")]
+    SaveFailed(String),
+
+    #[error("Model not found: {0}")]
+    ModelNotFound(String),
+
+    #[error("Inference failed: {0}")]
+    InferenceFailed(String),
+
+    #[error("Download failed: {0}")]
+    DownloadFailed(String),
+
     #[error("{0}")]
     General(String),
 }
@@ -26,6 +38,10 @@ impl Serialize for AppError {
             AppError::FileRead(_) => "FileRead",
             AppError::ImageDecode(_) => "ImageDecode",
             AppError::UnsupportedFormat(_) => "UnsupportedFormat",
+            AppError::SaveFailed(_) => "SaveFailed",
+            AppError::ModelNotFound(_) => "ModelNotFound",
+            AppError::InferenceFailed(_) => "InferenceFailed",
+            AppError::DownloadFailed(_) => "DownloadFailed",
             AppError::General(_) => "General",
         };
         state.serialize_field("kind", kind)?;
@@ -64,7 +80,11 @@ mod tests {
             AppError::FileRead("a".into()),
             AppError::ImageDecode("b".into()),
             AppError::UnsupportedFormat("c".into()),
-            AppError::General("d".into()),
+            AppError::SaveFailed("d".into()),
+            AppError::ModelNotFound("e".into()),
+            AppError::InferenceFailed("f".into()),
+            AppError::DownloadFailed("g".into()),
+            AppError::General("h".into()),
         ];
         for err in variants {
             let json = serde_json::to_value(&err).unwrap();

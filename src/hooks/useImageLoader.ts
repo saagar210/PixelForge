@@ -16,7 +16,8 @@ const IMAGE_EXTENSIONS = [
 ];
 
 export function useImageLoader() {
-  const { setImage, setLoading, setError, clearImage } = useAppStore();
+  const { setImage, setLoading, setError, clearImage, setFilePaths } =
+    useAppStore();
 
   const loadImageFromPath = useCallback(
     async (path: string) => {
@@ -34,6 +35,7 @@ export function useImageLoader() {
         }
 
         setImage(url, info);
+        setFilePaths(info.filePath, info.filePath);
       } catch (err: unknown) {
         const message =
           err instanceof Error
@@ -46,7 +48,7 @@ export function useImageLoader() {
         setLoading(false);
       }
     },
-    [setImage, setLoading, setError],
+    [setImage, setLoading, setError, setFilePaths],
   );
 
   const openFileDialog = useCallback(async () => {

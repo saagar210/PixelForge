@@ -9,6 +9,7 @@
     "dialog:allow-open",
     "dialog:default",
     "fs:default",
-    "fs:allow-read"
+    "fs:allow-read",
+    "dialog:allow-save"
   ]
 }
