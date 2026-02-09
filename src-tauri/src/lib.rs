@@ -28,6 +28,12 @@ pub fn run() {
             commands::export::save_image,
             // Phase 3: AI + Model management
             commands::ai::remove_background,
+            // Phase 4: AI Operations
+            commands::operations::extract_palette,
+            commands::ai::classify_image,
+            commands::ai::apply_style_transfer,
+            commands::ai::upscale_image,
+            commands::ai::apply_inpainting,
             models::manager::get_models_status,
             models::manager::download_model,
             models::manager::delete_model,

@@ -31,6 +31,10 @@ interface AppState {
   afterImageUrl: string | null;
   showBeforeAfter: boolean;
 
+  // Inpaint mode (Phase 4)
+  inpaintMode: boolean;
+  brushSize: number;
+
   // Viewport
   zoom: number;
   panX: number;
@@ -61,6 +65,10 @@ interface AppState {
   setBeforeAfter: (before: string, after: string) => void;
   clearBeforeAfter: () => void;
   setShowBeforeAfter: (show: boolean) => void;
+
+  // Phase 4 actions
+  setInpaintMode: (active: boolean) => void;
+  setBrushSize: (size: number) => void;
 }
 
 function applyThemeClass(theme: ThemeMode) {
@@ -89,6 +97,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   beforeImageUrl: null,
   afterImageUrl: null,
   showBeforeAfter: false,
+  inpaintMode: false,
+  brushSize: 30,
   zoom: 1,
   panX: 0,
   panY: 0,
@@ -110,6 +120,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       beforeImageUrl: null,
       afterImageUrl: null,
       showBeforeAfter: false,
+      inpaintMode: false,
     }),
 
   setLoading: (loading) => set({ isLoading: loading }),
@@ -171,4 +182,8 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ beforeImageUrl: null, afterImageUrl: null, showBeforeAfter: false }),
 
   setShowBeforeAfter: (show) => set({ showBeforeAfter: show }),
+
+  // Phase 4
+  setInpaintMode: (active) => set({ inpaintMode: active }),
+  setBrushSize: (size) => set({ brushSize: Math.min(200, Math.max(1, size)) }),
 }));

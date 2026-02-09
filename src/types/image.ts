@@ -68,3 +68,17 @@ export interface DownloadProgress {
   downloadedBytes: number;
   totalBytes: number;
 }
+
+// Phase 4: AI Operations
+export interface PaletteColor {
+  r: number;
+  g: number;
+  b: number;
+  hex: string;
+  percentage: number;
+}
+
+export interface ClassificationResult {
+  label: string;
+  confidence: number;
+}

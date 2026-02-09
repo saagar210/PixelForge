@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import type { ImageInfo, ModelStatus } from "../types/image";
+import type { ImageInfo, ModelStatus, PaletteColor, ClassificationResult } from "../types/image";
 
 // Phase 1: Image loading
 export async function getImageInfo(path: string): Promise<ImageInfo> {
@@ -127,4 +127,39 @@ export async function deleteModel(modelId: string): Promise<void> {
 // Phase 3: AI operations
 export async function removeBackground(path: string): Promise<string> {
   return invoke<string>("remove_background", { path });
+}
+
+// Phase 4: AI operations
+export async function extractPalette(path: string, numColors: number): Promise<PaletteColor[]> {
+  return invoke<PaletteColor[]>("extract_palette", { path, numColors });
+}
+
+export async function classifyImage(path: string): Promise<ClassificationResult[]> {
+  return invoke<ClassificationResult[]>("classify_image", { path });
+}
+
+export async function applyStyleTransfer(
+  path: string,
+  styleId: string,
+  strength: number,
+): Promise<string> {
+  return invoke<string>("apply_style_transfer", { path, styleId, strength });
+}
+
+export async function upscaleImage(path: string, scale: number): Promise<string> {
+  return invoke<string>("upscale_image", { path, scale });
+}
+
+export async function applyInpainting(
+  imagePath: string,
+  maskData: number[],
+  maskWidth: number,
+  maskHeight: number,
+): Promise<string> {
+  return invoke<string>("apply_inpainting", {
+    imagePath,
+    maskData: Array.from(maskData),
+    maskWidth,
+    maskHeight,
+  });
 }

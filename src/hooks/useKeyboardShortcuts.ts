@@ -5,7 +5,7 @@ export function useKeyboardShortcuts(
   openFile: () => void,
   onSave?: () => void,
 ) {
-  const { zoom, setZoom, resetView, undo } = useAppStore();
+  const { zoom, setZoom, resetView, undo, inpaintMode, brushSize, setBrushSize } = useAppStore();
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -29,7 +29,16 @@ export function useKeyboardShortcuts(
       } else if (mod && e.key === "s") {
         e.preventDefault();
         onSave?.();
+      } else if (e.key === "[" && inpaintMode) {
+        e.preventDefault();
+        setBrushSize(brushSize - 10);
+      } else if (e.key === "]" && inpaintMode) {
+        e.preventDefault();
+        setBrushSize(brushSize + 10);
       } else if (e.key === "Escape") {
+        if (inpaintMode) {
+          useAppStore.getState().setInpaintMode(false);
+        }
         useAppStore.getState().setSidebarPanel(null);
         useAppStore.getState().clearBeforeAfter();
       }
@@ -37,5 +46,5 @@ export function useKeyboardShortcuts(
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [openFile, onSave, zoom, setZoom, resetView, undo]);
+  }, [openFile, onSave, zoom, setZoom, resetView, undo, inpaintMode, brushSize, setBrushSize]);
 }

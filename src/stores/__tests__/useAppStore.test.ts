@@ -23,6 +23,8 @@ describe("useAppStore", () => {
       beforeImageUrl: null,
       afterImageUrl: null,
       showBeforeAfter: false,
+      inpaintMode: false,
+      brushSize: 30,
     });
   });
 
@@ -183,5 +185,34 @@ describe("useAppStore", () => {
     expect(state.beforeImageUrl).toBeNull();
     expect(state.afterImageUrl).toBeNull();
     expect(state.showBeforeAfter).toBe(false);
+  });
+
+  // Phase 4: Inpaint mode
+  it("setInpaintMode toggles inpaint state", () => {
+    expect(useAppStore.getState().inpaintMode).toBe(false);
+    useAppStore.getState().setInpaintMode(true);
+    expect(useAppStore.getState().inpaintMode).toBe(true);
+    useAppStore.getState().setInpaintMode(false);
+    expect(useAppStore.getState().inpaintMode).toBe(false);
+  });
+
+  it("setBrushSize clamps to 1–200", () => {
+    useAppStore.getState().setBrushSize(50);
+    expect(useAppStore.getState().brushSize).toBe(50);
+
+    useAppStore.getState().setBrushSize(0);
+    expect(useAppStore.getState().brushSize).toBe(1);
+
+    useAppStore.getState().setBrushSize(-10);
+    expect(useAppStore.getState().brushSize).toBe(1);
+
+    useAppStore.getState().setBrushSize(300);
+    expect(useAppStore.getState().brushSize).toBe(200);
+  });
+
+  it("clearImage resets inpaintMode", () => {
+    useAppStore.getState().setInpaintMode(true);
+    useAppStore.getState().clearImage();
+    expect(useAppStore.getState().inpaintMode).toBe(false);
   });
 });
