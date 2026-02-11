@@ -8,6 +8,7 @@ import { LoadingOverlay } from "./components/ui/LoadingOverlay";
 import { OperationsPanel } from "./components/panels/OperationsPanel";
 import { AiPanel } from "./components/panels/AiPanel";
 import { ExportPanel } from "./components/panels/ExportPanel";
+import { BatchPanel } from "./components/panels/BatchPanel";
 import { useImageLoader } from "./hooks/useImageLoader";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { useAppStore } from "./stores/useAppStore";
@@ -37,6 +38,7 @@ function App() {
     if (activeSidebarPanel === "ai")
       return <AiPanel getMaskData={getMaskData} clearMask={clearMask} />;
     if (activeSidebarPanel === "export") return <ExportPanel />;
+    if (activeSidebarPanel === "batch") return <BatchPanel />;
     return null;
   }
 

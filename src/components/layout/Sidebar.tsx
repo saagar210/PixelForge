@@ -1,4 +1,4 @@
-import { Crop, Sparkles, Save } from "lucide-react";
+import { Crop, Sparkles, Save, ListChecks } from "lucide-react";
 import { useAppStore, type SidebarPanel } from "../../stores/useAppStore";
 
 const TOOL_GROUPS = [
@@ -6,16 +6,25 @@ const TOOL_GROUPS = [
     label: "Edit",
     panel: "operations" as SidebarPanel,
     icon: Crop,
+    requiresImage: true,
   },
   {
     label: "AI Tools",
     panel: "ai" as SidebarPanel,
     icon: Sparkles,
+    requiresImage: true,
   },
   {
     label: "Export",
     panel: "export" as SidebarPanel,
     icon: Save,
+    requiresImage: true,
+  },
+  {
+    label: "Batch",
+    panel: "batch" as SidebarPanel,
+    icon: ListChecks,
+    requiresImage: false,
   },
 ];
 
@@ -60,35 +69,39 @@ export function Sidebar() {
   const imageInfo = useAppStore((s) => s.imageInfo);
   const activeSidebarPanel = useAppStore((s) => s.activeSidebarPanel);
   const setSidebarPanel = useAppStore((s) => s.setSidebarPanel);
+
   return (
     <aside className="w-56 border-r border-(--color-border) bg-(--color-bg-secondary) hidden lg:flex flex-col">
+      <nav className="p-2 space-y-1">
+        {TOOL_GROUPS.map(({ label, panel, icon: Icon, requiresImage }) => {
+          const disabled = requiresImage && !imageInfo;
+          return (
+            <button
+              key={panel}
+              onClick={() => setSidebarPanel(panel)}
+              disabled={disabled}
+              className={`w-full flex items-center gap-2 px-3 py-2 text-xs rounded-md transition-colors ${
+                activeSidebarPanel === panel
+                  ? "bg-(--color-accent) text-white"
+                  : "hover:bg-(--color-bg-tertiary)"
+              } disabled:opacity-40 disabled:cursor-not-allowed`}
+              title={disabled ? "Open an image to enable this tool" : undefined}
+            >
+              <Icon size={14} />
+              {label}
+            </button>
+          );
+        })}
+      </nav>
+
       {!imageInfo ? (
-        <div className="p-4 text-xs text-(--color-text-secondary)">
-          Open an image to get started
+        <div className="p-4 text-xs text-(--color-text-secondary) border-t border-(--color-border)">
+          Open an image for edit/AI/export tools. Batch is available now.
         </div>
       ) : (
-        <>
-          <nav className="p-2 space-y-1">
-            {TOOL_GROUPS.map(({ label, panel, icon: Icon }) => (
-              <button
-                key={panel}
-                onClick={() => setSidebarPanel(panel)}
-                className={`w-full flex items-center gap-2 px-3 py-2 text-xs rounded-md transition-colors ${
-                  activeSidebarPanel === panel
-                    ? "bg-(--color-accent) text-white"
-                    : "hover:bg-(--color-bg-tertiary)"
-                }`}
-              >
-                <Icon size={14} />
-                {label}
-              </button>
-            ))}
-          </nav>
-
-          <div className="border-t border-(--color-border) mt-2">
-            <HistoryPanel />
-          </div>
-        </>
+        <div className="border-t border-(--color-border) mt-2">
+          <HistoryPanel />
+        </div>
       )}
     </aside>
   );

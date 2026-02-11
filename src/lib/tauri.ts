@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { convertFileSrc } from "@tauri-apps/api/core";
-import type { ImageInfo, ModelStatus, PaletteColor, ClassificationResult } from "../types/image";
+import type { ImageInfo, ModelStatus, PaletteColor, ClassificationResult, BatchResizeRequest, BatchResult } from "../types/image";
 
 // Phase 1: Image loading
 export async function getImageInfo(path: string): Promise<ImageInfo> {
@@ -162,4 +162,10 @@ export async function applyInpainting(
     maskWidth,
     maskHeight,
   });
+}
+
+
+// Phase 5: Batch processing
+export async function runBatchResizeExport(request: BatchResizeRequest): Promise<BatchResult> {
+  return invoke<BatchResult>("run_batch_resize_export", { request });
 }
