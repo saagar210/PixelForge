@@ -37,6 +37,8 @@ pub fn run() {
             models::manager::get_models_status,
             models::manager::download_model,
             models::manager::delete_model,
+            // Phase 5: Batch processing
+            commands::batch::run_batch_resize_export,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -3,7 +3,7 @@ import { convertFileSrc } from "@tauri-apps/api/core";
 import type { ImageInfo, OperationHistoryEntry } from "../types/image";
 
 export type ThemeMode = "light" | "dark" | "system";
-export type SidebarPanel = "operations" | "ai" | "export" | null;
+export type SidebarPanel = "operations" | "ai" | "export" | "batch" | null;
 
 const MIN_ZOOM = 0.1;
 const MAX_ZOOM = 20;

@@ -82,3 +82,28 @@ export interface ClassificationResult {
   label: string;
   confidence: number;
 }
+
+export interface BatchResizeRequest {
+  inputPaths: string[];
+  outputDir: string;
+  width: number;
+  height: number;
+  filter: "lanczos" | "bilinear" | "nearest";
+  format: "png" | "jpeg" | "webp" | "bmp" | "tiff" | "avif";
+  quality: number;
+}
+
+export interface BatchResult {
+  total: number;
+  processed: number;
+  failed: number;
+  outputs: string[];
+  errors: string[];
+}
+
+export interface BatchProgress {
+  current: number;
+  total: number;
+  percent: number;
+  file: string;
+}
