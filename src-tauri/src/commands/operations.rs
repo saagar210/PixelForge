@@ -5,12 +5,19 @@ use serde::Serialize;
 fn save_temp_image(img: &DynamicImage) -> Result<String, AppError> {
     let id = uuid::Uuid::new_v4();
     let path = std::env::temp_dir().join(format!("pixelforge_{}.png", id));
-    img.save(&path).map_err(|e| AppError::SaveFailed(e.to_string()))?;
+    img.save(&path)
+        .map_err(|e| AppError::SaveFailed(e.to_string()))?;
     Ok(path.to_string_lossy().into_owned())
 }
 
 #[tauri::command]
-pub fn apply_crop(path: String, x: u32, y: u32, width: u32, height: u32) -> Result<String, AppError> {
+pub fn apply_crop(
+    path: String,
+    x: u32,
+    y: u32,
+    width: u32,
+    height: u32,
+) -> Result<String, AppError> {
     let img = image::open(&path)?;
     if x + width > img.width() || y + height > img.height() {
         return Err(AppError::General("Crop region exceeds image bounds".into()));
@@ -20,7 +27,12 @@ pub fn apply_crop(path: String, x: u32, y: u32, width: u32, height: u32) -> Resu
 }
 
 #[tauri::command]
-pub fn apply_resize(path: String, width: u32, height: u32, filter: String) -> Result<String, AppError> {
+pub fn apply_resize(
+    path: String,
+    width: u32,
+    height: u32,
+    filter: String,
+) -> Result<String, AppError> {
     let img = image::open(&path)?;
     let filter_type = match filter.as_str() {
         "lanczos" => image::imageops::FilterType::Lanczos3,
@@ -39,7 +51,11 @@ pub fn apply_rotate(path: String, degrees: i32) -> Result<String, AppError> {
         90 => img.rotate90(),
         180 => img.rotate180(),
         270 | -90 => img.rotate270(),
-        _ => return Err(AppError::General("Only 90, 180, 270 degree rotations supported".into())),
+        _ => {
+            return Err(AppError::General(
+                "Only 90, 180, 270 degree rotations supported".into(),
+            ))
+        }
     };
     save_temp_image(&rotated)
 }
@@ -50,7 +66,11 @@ pub fn apply_flip(path: String, direction: String) -> Result<String, AppError> {
     let flipped = match direction.as_str() {
         "horizontal" => img.fliph(),
         "vertical" => img.flipv(),
-        _ => return Err(AppError::General("Direction must be 'horizontal' or 'vertical'".into())),
+        _ => {
+            return Err(AppError::General(
+                "Direction must be 'horizontal' or 'vertical'".into(),
+            ))
+        }
     };
     save_temp_image(&flipped)
 }
@@ -91,7 +111,11 @@ fn rgb_to_hsl(r: u8, g: u8, b: u8) -> (f32, f32, f32) {
         return (0.0, 0.0, l);
     }
     let d = max - min;
-    let s = if l > 0.5 { d / (2.0 - max - min) } else { d / (max + min) };
+    let s = if l > 0.5 {
+        d / (2.0 - max - min)
+    } else {
+        d / (max + min)
+    };
     let h = if (max - r).abs() < f32::EPSILON {
         ((g - b) / d + if g < b { 6.0 } else { 0.0 }) / 6.0
     } else if (max - g).abs() < f32::EPSILON {
@@ -103,11 +127,21 @@ fn rgb_to_hsl(r: u8, g: u8, b: u8) -> (f32, f32, f32) {
 }
 
 fn hue_to_rgb(p: f32, q: f32, mut t: f32) -> f32 {
-    if t < 0.0 { t += 1.0; }
-    if t > 1.0 { t -= 1.0; }
-    if t < 1.0 / 6.0 { return p + (q - p) * 6.0 * t; }
-    if t < 0.5 { return q; }
-    if t < 2.0 / 3.0 { return p + (q - p) * (2.0 / 3.0 - t) * 6.0; }
+    if t < 0.0 {
+        t += 1.0;
+    }
+    if t > 1.0 {
+        t -= 1.0;
+    }
+    if t < 1.0 / 6.0 {
+        return p + (q - p) * 6.0 * t;
+    }
+    if t < 0.5 {
+        return q;
+    }
+    if t < 2.0 / 3.0 {
+        return p + (q - p) * (2.0 / 3.0 - t) * 6.0;
+    }
     p
 }
 
@@ -116,7 +150,11 @@ fn hsl_to_rgb(h: f32, s: f32, l: f32) -> (u8, u8, u8) {
         let v = (l * 255.0).round() as u8;
         return (v, v, v);
     }
-    let q = if l < 0.5 { l * (1.0 + s) } else { l + s - l * s };
+    let q = if l < 0.5 {
+        l * (1.0 + s)
+    } else {
+        l + s - l * s
+    };
     let p = 2.0 * l - q;
     let r = hue_to_rgb(p, q, h + 1.0 / 3.0);
     let g = hue_to_rgb(p, q, h);
@@ -326,7 +364,11 @@ pub fn rotate_image(path: &str, degrees: i32) -> Result<String, AppError> {
         90 => img.rotate90(),
         180 => img.rotate180(),
         270 | -90 => img.rotate270(),
-        _ => return Err(AppError::General("Only 90, 180, 270 degree rotations supported".into())),
+        _ => {
+            return Err(AppError::General(
+                "Only 90, 180, 270 degree rotations supported".into(),
+            ))
+        }
     };
     save_temp_image(&rotated)
 }
@@ -336,7 +378,11 @@ pub fn flip_image(path: &str, direction: &str) -> Result<String, AppError> {
     let flipped = match direction {
         "horizontal" => img.fliph(),
         "vertical" => img.flipv(),
-        _ => return Err(AppError::General("Direction must be 'horizontal' or 'vertical'".into())),
+        _ => {
+            return Err(AppError::General(
+                "Direction must be 'horizontal' or 'vertical'".into(),
+            ))
+        }
     };
     save_temp_image(&flipped)
 }
@@ -416,7 +462,8 @@ mod tests {
         let img = image::RgbaImage::from_fn(w, h, |x, y| {
             image::Rgba([(x % 256) as u8, (y % 256) as u8, 128, 255])
         });
-        let path = std::env::temp_dir().join(format!("pixelforge_test_{}.png", uuid::Uuid::new_v4()));
+        let path =
+            std::env::temp_dir().join(format!("pixelforge_test_{}.png", uuid::Uuid::new_v4()));
         img.save(&path).unwrap();
         path.to_string_lossy().into_owned()
     }
