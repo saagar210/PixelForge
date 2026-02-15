@@ -90,7 +90,9 @@ pub fn run_batch_resize_export(
     }
 
     if request.width == 0 || request.height == 0 {
-        return Err(AppError::General("Width and height must be greater than 0".into()));
+        return Err(AppError::General(
+            "Width and height must be greater than 0".into(),
+        ));
     }
 
     let output_dir = Path::new(&request.output_dir);
@@ -126,12 +128,8 @@ pub fn run_batch_resize_export(
                 return Err(AppError::FileRead("Input file does not exist".into()));
             }
 
-            let resized_path = operations::resize_image(
-                input,
-                request.width,
-                request.height,
-                &request.filter,
-            )?;
+            let resized_path =
+                operations::resize_image(input, request.width, request.height, &request.filter)?;
 
             let output_path = build_unique_output_path(output_dir, input, ext);
             export::save_image(
@@ -189,7 +187,8 @@ mod tests {
 
     #[test]
     fn unique_path_appends_increment_when_collision_exists() {
-        let dir = std::env::temp_dir().join(format!("pixelforge_batch_test_{}", uuid::Uuid::new_v4()));
+        let dir =
+            std::env::temp_dir().join(format!("pixelforge_batch_test_{}", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(&dir).expect("create temp dir");
 
         let first = dir.join("photo_resized.jpg");

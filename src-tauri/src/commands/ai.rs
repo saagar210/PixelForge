@@ -10,7 +10,8 @@ const IMAGENET_LABELS: &str = include_str!("../models/imagenet_labels.json");
 fn save_temp_image(img: &DynamicImage) -> Result<String, AppError> {
     let id = uuid::Uuid::new_v4();
     let path = std::env::temp_dir().join(format!("pixelforge_{}.png", id));
-    img.save(&path).map_err(|e| AppError::SaveFailed(e.to_string()))?;
+    img.save(&path)
+        .map_err(|e| AppError::SaveFailed(e.to_string()))?;
     Ok(path.to_string_lossy().into_owned())
 }
 
@@ -104,8 +105,8 @@ pub fn remove_background(
         .get_mut("u2net")
         .ok_or_else(|| AppError::InferenceFailed("Session not found".into()))?;
 
-    let input_value =
-        ort::value::Tensor::from_array(input).map_err(|e| AppError::InferenceFailed(e.to_string()))?;
+    let input_value = ort::value::Tensor::from_array(input)
+        .map_err(|e| AppError::InferenceFailed(e.to_string()))?;
 
     let outputs = session
         .run(ort::inputs![input_value])
@@ -194,8 +195,8 @@ pub fn remove_background_core(
         .get_mut("u2net")
         .ok_or_else(|| AppError::InferenceFailed("u2net session not found".into()))?;
 
-    let input_value =
-        ort::value::Tensor::from_array(input).map_err(|e| AppError::InferenceFailed(e.to_string()))?;
+    let input_value = ort::value::Tensor::from_array(input)
+        .map_err(|e| AppError::InferenceFailed(e.to_string()))?;
     let outputs = session
         .run(ort::inputs![input_value])
         .map_err(|e| AppError::InferenceFailed(e.to_string()))?;
@@ -295,8 +296,8 @@ pub fn classify_image(
         .get_mut("mobilenetv2")
         .ok_or_else(|| AppError::InferenceFailed("mobilenetv2 session not found".into()))?;
 
-    let input_value =
-        ort::value::Tensor::from_array(input).map_err(|e| AppError::InferenceFailed(e.to_string()))?;
+    let input_value = ort::value::Tensor::from_array(input)
+        .map_err(|e| AppError::InferenceFailed(e.to_string()))?;
     let outputs = session
         .run(ort::inputs![input_value])
         .map_err(|e| AppError::InferenceFailed(e.to_string()))?;
@@ -414,8 +415,8 @@ pub fn apply_style_transfer(
         .get_mut(&style_id)
         .ok_or_else(|| AppError::InferenceFailed(format!("{} session not found", style_id)))?;
 
-    let input_value =
-        ort::value::Tensor::from_array(input).map_err(|e| AppError::InferenceFailed(e.to_string()))?;
+    let input_value = ort::value::Tensor::from_array(input)
+        .map_err(|e| AppError::InferenceFailed(e.to_string()))?;
     let outputs = session
         .run(ort::inputs![input_value])
         .map_err(|e| AppError::InferenceFailed(e.to_string()))?;
@@ -802,15 +803,31 @@ pub fn upscale_image_core(
     for y in 0..out_h {
         for x in 0..out_w {
             let idx = (y as usize * out_w as usize + x as usize) * 3;
-            let r = if weights[idx] > 0.0 { (accum[idx] / weights[idx]).round() as u8 } else { 0 };
-            let g = if weights[idx + 1] > 0.0 { (accum[idx + 1] / weights[idx + 1]).round() as u8 } else { 0 };
-            let b = if weights[idx + 2] > 0.0 { (accum[idx + 2] / weights[idx + 2]).round() as u8 } else { 0 };
+            let r = if weights[idx] > 0.0 {
+                (accum[idx] / weights[idx]).round() as u8
+            } else {
+                0
+            };
+            let g = if weights[idx + 1] > 0.0 {
+                (accum[idx + 1] / weights[idx + 1]).round() as u8
+            } else {
+                0
+            };
+            let b = if weights[idx + 2] > 0.0 {
+                (accum[idx + 2] / weights[idx + 2]).round() as u8
+            } else {
+                0
+            };
             output.put_pixel(x, y, image::Rgb([r, g, b]));
         }
     }
 
     let final_img = if scale == 2 {
-        DynamicImage::ImageRgb8(output).resize_exact(orig_w * 2, orig_h * 2, image::imageops::FilterType::Lanczos3)
+        DynamicImage::ImageRgb8(output).resize_exact(
+            orig_w * 2,
+            orig_h * 2,
+            image::imageops::FilterType::Lanczos3,
+        )
     } else {
         DynamicImage::ImageRgb8(output)
     };

@@ -1,7 +1,12 @@
 use crate::error::AppError;
 
 #[tauri::command]
-pub fn save_image(source_path: String, dest_path: String, format: String, quality: u8) -> Result<(), AppError> {
+pub fn save_image(
+    source_path: String,
+    dest_path: String,
+    format: String,
+    quality: u8,
+) -> Result<(), AppError> {
     let img = image::open(&source_path)?;
 
     match format.as_str() {
@@ -46,7 +51,10 @@ mod tests {
 
     fn create_test_image() -> String {
         let img = image::RgbaImage::new(10, 10);
-        let path = std::env::temp_dir().join(format!("pixelforge_export_test_{}.png", uuid::Uuid::new_v4()));
+        let path = std::env::temp_dir().join(format!(
+            "pixelforge_export_test_{}.png",
+            uuid::Uuid::new_v4()
+        ));
         img.save(&path).unwrap();
         path.to_string_lossy().into_owned()
     }

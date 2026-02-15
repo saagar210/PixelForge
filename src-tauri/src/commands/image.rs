@@ -40,8 +40,8 @@ pub fn get_image_info(path: String) -> Result<ImageInfo, AppError> {
 
     let metadata = std::fs::metadata(file_path)?;
     let (format, needs_conversion) = detect_format(file_path)?;
-    let (width, height) = image::image_dimensions(file_path)
-        .map_err(|e| AppError::ImageDecode(e.to_string()))?;
+    let (width, height) =
+        image::image_dimensions(file_path).map_err(|e| AppError::ImageDecode(e.to_string()))?;
 
     let file_name = file_path
         .file_name()
