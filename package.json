@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "lean:dev": "bash scripts/dev-lean.sh",
+    "clean:heavy": "bash scripts/clean-heavy.sh",
+    "clean:full": "bash scripts/clean-full.sh",
+    "disk:usage": "bash scripts/disk-usage.sh"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",

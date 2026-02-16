@@ -33,10 +33,53 @@ pnpm install
 pnpm tauri dev
 ```
 
+### Lean Dev (low disk mode)
+
+```bash
+pnpm lean:dev
+```
+
+What lean mode does:
+- Starts the app with the same `pnpm tauri dev` command path.
+- Uses ephemeral cache folders for Vite and Rust build outputs.
+- Cleans heavy repository build artifacts automatically when the dev process exits.
+
+Tradeoff:
+- Uses less persistent disk in the repo.
+- Startup is slower because Rust rebuilds more often after restarts.
+
 ## Build
 
 ```bash
 pnpm tauri build
+```
+
+## Cleanup Commands
+
+Heavy build artifacts only:
+
+```bash
+pnpm clean:heavy
+```
+
+This removes:
+- `dist/`
+- `src-tauri/target/`
+- `node_modules/.vite/`
+
+Full reproducible local cleanup:
+
+```bash
+pnpm clean:full
+```
+
+This runs `clean:heavy`, then also removes:
+- `node_modules/`
+
+Disk usage report:
+
+```bash
+pnpm disk:usage
 ```
 
 ## Project Layout
@@ -49,4 +92,5 @@ src-tauri/  Rust + Tauri backend
 ## Notes
 
 - AI models are downloaded on first use and cached under `~/.pixelforge/models/`.
+- Cleanup scripts do not remove source files, `.git`, or user model data under `~/.pixelforge/models/`.
 - This repository is intentionally lean and currently omits CI/test scaffolding.
